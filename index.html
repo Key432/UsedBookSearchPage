@@ -1,12 +1,140 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Static Site</title>
+    <meta name="robots" content="noindex">
+    <title>中古本販売店横断検索</title>
+    <style>
+        :root {
+            color-scheme: light;
+            font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #f7f6f2;
+            color: #1d1b16;
+        }
+
+        main {
+            max-width: 720px;
+            margin: 64px auto;
+            padding: 0 24px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        p {
+            line-height: 1.7;
+            margin-top: 0;
+        }
+
+        .search-panel {
+            margin-top: 32px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .search-panel label {
+            font-weight: 600;
+        }
+
+        .search-panel input {
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #c7c0b5;
+            font-size: 1rem;
+        }
+
+        .search-panel button {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            background: #b86b3f;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .search-panel button:hover {
+            background: #a55e35;
+        }
+
+        .sites {
+            margin-top: 28px;
+            padding-left: 18px;
+            color: #3c382f;
+        }
+
+        .sites li {
+            margin-bottom: 6px;
+        }
+
+        .hint {
+            font-size: 0.9rem;
+            color: #5a5346;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to My Static Site</h1>
-    <p>Hello World!</p>
+    <main>
+        <h1>中古本販売店横断検索</h1>
+        <p>
+            検索窓に入力した文字列を中古本販売のサイトのURLクエリに埋め込み、
+            「検索」ボタンでそれぞれのサイトを別タブで開きます。
+        </p>
+
+        <form class="search-panel" id="search-form">
+            <label for="search-query">検索ワード</label>
+            <input id="search-query" name="query" type="text" placeholder="例: ハリーポッター 1巻" required>
+            <button type="submit">検索</button>
+            <span class="hint">新しいタブで各サイトを開きます。</span>
+        </form>
+
+        <ul class="sites">
+            <li>Bookoffオンライン</li>
+            <li>Amazon</li>
+            <li>ネットオフ</li>
+            <li>駿河屋</li>
+            <li>まんだらけ</li>
+            <li>メルカリ</li>
+            <li>Yahoo! オークション</li>
+            <li>ラクマ</li>
+        </ul>
+    </main>
+
+    <script>
+        const form = document.getElementById("search-form");
+        const input = document.getElementById("search-query");
+        const sites = [
+            "https://shopping.bookoff.co.jp/search/stock/z/genre/12/keyword/{query}?sort=11&per-page=120",
+            "https://www.amazon.co.jp/s?k={query}&i=stripbooks",
+            "https://www.netoff.co.jp/cmdtyallsearch/?cat=1002&sort=oldest&stock=1&word={query}",
+            "https://www.suruga-ya.jp/search?category=700&adult_s=2&rankBy=release_date(int):ascending&search_word={query}",
+            "https://order.mandarake.co.jp/order/listPage/list?categoryCode=11&keyword={query}",
+            "https://jp.mercari.com/search?category_id=72&status=on_sale&keyword={query}",
+            "https://auctions.yahoo.co.jp/search/search?auccat=21600&p={query}",
+            "https://fril.jp/s?transaction=selling&query={query}"
+        ];
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const query = input.value.trim();
+            if (!query) {
+                input.focus();
+                return;
+            }
+            const encodedQuery = encodeURIComponent(query);
+            sites.forEach((template) => {
+                const url = template.replace("{query}", encodedQuery);
+                window.open(url, "_blank", "noopener");
+            });
+        });
+    </script>
 </body>
 </html>
